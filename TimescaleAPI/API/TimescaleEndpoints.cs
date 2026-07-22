@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using CsvHelper;
-using CsvHelper.Configuration;
-using TimescaleAPI.Application;
+﻿using TimescaleAPI.Application;
+using TimescaleAPI.Application.Services;
 
 namespace TimescaleAPI.API;
 
@@ -10,11 +7,11 @@ public static class TimescaleEndpoints
 {
     public static void RegisterTimescaleEndpoints(this WebApplication app)
     {
-        app.MapPost("/upload", async (IFormFile file) =>
+        app.MapPost("/upload", async (IFormFile file, UploadService uploadService, ILogger<UploadService> logger) =>
             {
-                UploadService.ProcessUpload(file);
+                var result = await uploadService.ProcessUpload(file);
 
-                return Results.Ok();
+                return Results.Ok(result);
             })
             .DisableAntiforgery();
 

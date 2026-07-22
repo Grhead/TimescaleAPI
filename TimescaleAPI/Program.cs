@@ -1,4 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using TimescaleAPI.API;
+using TimescaleAPI.Application;
+using TimescaleAPI.Application.Services;
+using TimescaleAPI.Infrastructure;
 
 namespace TimescaleAPI;
 
@@ -10,7 +14,12 @@ public class Program
 
         builder.Services.AddAuthorization();
         builder.Services.AddOpenApi();
+        
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        builder.Services.AddDbContext<MetricsContext>(options =>
+            options.UseNpgsql(connectionString));
 
+        builder.Services.AddScoped<UploadService>();
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())

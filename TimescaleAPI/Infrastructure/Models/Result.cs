@@ -2,14 +2,15 @@
 
 public class Result
 {
-    public Guid Id { get; set; }
-    public int DateDelta { get; set; }
-    public DateTime DateMin { get; set; }
-    public double ExecutionTimeAverage { get; set; }
-    public double ValueAverage { get; set; }
-    public double ValueMedian { get; set; }
-    public double ValueMax { get; set; }
-    public double ValueMin { get; set; }
+    public Guid Id { get; init; }
+    public int DateDelta { get; init; }
+    public DateTime DateMin { get; init; }
+    public double ExecutionTimeAverage { get; init; }
+    public double ValueAverage { get; init; }
+    public double ValueMedian { get; init; }
+    public double ValueMax { get; init; }
+    public double ValueMin { get; init; }
     
-    public Origin Origin { get; set; }
+    public Guid OriginId { get; set; }
+    public Origin Origin { get; init; }
 }
