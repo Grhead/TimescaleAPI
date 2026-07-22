@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 using TimescaleAPI.Application;
@@ -10,14 +11,11 @@ public static class TimescaleEndpoints
     public static void RegisterTimescaleEndpoints(this WebApplication app)
     {
         app.MapPost("/upload", async (IFormFile file) =>
-        {
-            using var reader = new StreamReader(file.OpenReadStream());
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" };
-            using var csv = new CsvReader(reader, config);
-            
-            var records = csv.GetRecords<TimescaleData>().ToList();
-            return Results.Ok(records);
-        })
+            {
+                UploadService.ProcessUpload(file);
+
+                return Results.Ok();
+            })
             .DisableAntiforgery();
 
         app.MapGet("/results", async () => { });

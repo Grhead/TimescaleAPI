@@ -1,6 +1,6 @@
 ﻿namespace TimescaleAPI.Application;
 
-public class TimescaleData
+public record TimescaleData
 {
     public DateTime Date { get; set; }
     public int ExecutionTime {get; set;}
