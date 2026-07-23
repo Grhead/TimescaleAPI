@@ -1,5 +1,4 @@
-﻿using TimescaleAPI.Application;
-using TimescaleAPI.Application.Services;
+﻿using TimescaleAPI.Application.Services;
 
 namespace TimescaleAPI.API;
 
@@ -9,7 +8,7 @@ public static class TimescaleEndpoints
     {
         app.MapPost("/upload", async (IFormFile file, UploadService uploadService, ILogger<UploadService> logger) =>
             {
-                var result = await uploadService.ProcessUpload(file);
+                var result = await uploadService.ProcessUpload(file.OpenReadStream(), file.FileName);
 
                 return Results.Ok(result);
             })
