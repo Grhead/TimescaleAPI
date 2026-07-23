@@ -1,4 +1,4 @@
-﻿namespace TimescaleAPI.Infrastructure.Models;
+﻿namespace TimescaleAPI.Application.Models;
 
 public class Result
 {
@@ -6,7 +6,7 @@ public class Result
     {
     }
 
-    public Result(int deltaDate, DateTime minDate, double avgExecutionTime, double avgValue,
+    public Result(long deltaDate, DateTime minDate, double avgExecutionTime, double avgValue,
         double medianValue, double maxValue, double minValue)
     {
         Id = Guid.NewGuid();
@@ -20,7 +20,7 @@ public class Result
     }
     public Guid Id { get; private set; }
 
-    public int DeltaDate { get; private set; }
+    public long DeltaDate { get; private set; }
     public DateTime MinDate { get; private set; }
     public double AvgExecutionTime { get; private set; }
     public double AvgValue { get; private set; }
@@ -29,7 +29,7 @@ public class Result
     public double MinValue { get; private set; }
 
     public Guid OriginId { get; private set; }
-    public Origin Origin { get; private set; } = null!;
+    public Origin Origin { get; private set; }
 
     public void UpdateFrom(Result prevResult)
     {

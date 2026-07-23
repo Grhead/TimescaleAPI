@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TimescaleAPI.Application.Interfaces;
-using TimescaleAPI.Infrastructure.Models;
+using TimescaleAPI.Application.Models;
 
 namespace TimescaleAPI.Infrastructure.Repositories;
 
@@ -27,8 +27,7 @@ public class ValueRepository(MetricsContext context) : IValueRepository
         {
             if (existingValues.TryGetValue(value.Date, out var entity))
             {
-                entity.ExecutionTime = value.ExecutionTime;
-                entity.IndicatorValue = value.IndicatorValue;
+                entity.UpdateFrom(value);
             }
             else
             {

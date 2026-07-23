@@ -1,4 +1,4 @@
-﻿using TimescaleAPI.Infrastructure.Models;
+﻿using TimescaleAPI.Application.Models;
 
 namespace TimescaleAPI.Application.Interfaces;
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TimescaleAPI.Infrastructure.Models;
+using TimescaleAPI.Application.Models;
 
 namespace TimescaleAPI.Infrastructure;
 
@@ -14,5 +14,9 @@ public class MetricsContext(DbContextOptions<MetricsContext> options) : DbContex
         modelBuilder.Entity<Origin>().HasKey(p => p.Id);
         modelBuilder.Entity<Value>().HasKey(p => p.Id);
         modelBuilder.Entity<Result>().HasKey(p => p.Id);
+        
+        modelBuilder.Entity<Origin>()
+            .HasIndex(x => x.NameHash)
+            .IsUnique();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TimescaleAPI.Application.Interfaces;
-using TimescaleAPI.Infrastructure.Models;
+using TimescaleAPI.Application.Models;
 
 namespace TimescaleAPI.Infrastructure.Repositories;
 

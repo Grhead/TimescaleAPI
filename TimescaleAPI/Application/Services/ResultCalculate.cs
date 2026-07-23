@@ -1,5 +1,5 @@
 ﻿using TimescaleAPI.Application.Interfaces;
-using TimescaleAPI.Infrastructure.Models;
+using TimescaleAPI.Application.Models;
 
 namespace TimescaleAPI.Application.Services;
 
@@ -7,46 +7,18 @@ public sealed class ResultCalculator : IResultCalculator
 {
     public Result Calculate(IReadOnlyList<TimescaleData> records)
     {
-        var first = records[0];
-
-        var minDate = first.Date!.Value;
-        var maxDate = first.Date.Value;
-
-        var minValue = first.Value!.Value;
-        var maxValue = first.Value.Value;
-
-        double executionTimeSum = 0;
-        double valueSum = 0;
-
+        var stats = new TimescaleStatistics();
         foreach (var record in records)
-        {
-            var date = record.Date!.Value;
-            var value = record.Value!.Value;
-
-            if (date < minDate)
-                minDate = date;
-
-            if (date > maxDate)
-                maxDate = date;
-
-            if (value < minValue)
-                minValue = value;
-
-            if (value > maxValue)
-                maxValue = value;
-
-            executionTimeSum += record.ExecutionTime!.Value;
-            valueSum += value;
-        }
-
+            stats.Add(record);
+        
         return new Result(
-            (int)(maxDate - minDate).TotalSeconds,
-            minDate.ToUniversalTime(),
-            executionTimeSum / records.Count,
-            valueSum / records.Count,
+            stats.DeltaDate,
+            stats.MinDate.ToUniversalTime(),
+            stats.AvgExecutionTime,
+            stats.AvgValue,
             CalculateMedian(records),
-            maxValue,
-            minValue);
+            stats.MaxValue,
+            stats.MinValue);
     }
     
     private static double CalculateMedian(IReadOnlyList<TimescaleData> records)
