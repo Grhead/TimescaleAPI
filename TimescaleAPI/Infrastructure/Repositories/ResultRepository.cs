@@ -1,14 +1,24 @@
-﻿using TimescaleAPI.Application;
+﻿using Microsoft.EntityFrameworkCore;
 using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Infrastructure.Models;
 
 namespace TimescaleAPI.Infrastructure.Repositories;
 
-public class ResultRepository : IResultRepository
+public class ResultRepository(MetricsContext context, ILogger<ResultRepository> logger) : IResultRepository
 {
-    public bool CalculateResults(Origin origin, IList<TimescaleData> records)
+    public async Task AddOrUpdateResult(Origin origin, Result result)
     {
-        throw new NotImplementedException();
+        var existingResult = await context.Results
+            .FirstOrDefaultAsync(x => x.OriginId == origin.Id);
+
+        if (existingResult is not null)
+        {
+            existingResult.UpdateFrom(result);
+            return;
+        }
+
+        result.SetOrigin(origin);
+        await context.Results.AddAsync(result);
     }
 
     public bool GetResultsByFilters(Origin origin)

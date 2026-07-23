@@ -10,7 +10,7 @@ public static class TimescaleEndpoints
             {
                 var result = await uploadService.ProcessUpload(file.OpenReadStream(), file.FileName);
 
-                return Results.Ok(result);
+                return Results.Ok(result); // TODO return details
             })
             .DisableAntiforgery();
 

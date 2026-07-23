@@ -6,7 +6,7 @@ namespace TimescaleAPI.Infrastructure.Repositories;
 
 public class ValueRepository(MetricsContext context) : IValueRepository
 {
-    public async Task<Origin> GetOrCreateOrigin(string fileNameHash)
+    public async Task<Origin> GetOrAddOrigin(string fileNameHash)
     {
         var origin = await context.Origins.FirstOrDefaultAsync(x => x.NameHash == fileNameHash);
         if (origin != null) return origin;

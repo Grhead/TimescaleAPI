@@ -11,17 +11,37 @@ using ValidationException = TimescaleAPI.Application.Exceptions.ValidationExcept
 
 namespace TimescaleAPI.Application.Services;
 
-public class UploadService(IValueRepository valueRepository, ICommitable unitOfWork, IValidator<TimescaleData> validator, ILogger<UploadService> logger)
+public class UploadService(
+    IValueRepository valueRepository, 
+    IResultRepository resultRepository, 
+    ICommitable unitOfWork, 
+    IValidator<TimescaleData> validator, 
+    ILogger<UploadService> logger)
 {
     private const int MaxRecords = 10_000;
 
     public async Task<bool> ProcessUpload(Stream stream, string rowFileName)
     {
         var tsData = ParseUpload(stream);
-
         var fileName = GetFileNameHash(rowFileName);
-        await SaveRecords(fileName, tsData);
-        return true;
+        
+        var origin = await valueRepository.GetOrAddOrigin(fileName);
+        var values = tsData.Select(x => x.ToValueModel(origin)).ToList();
+        
+        await valueRepository.AddOrUpdateValues(origin, values);
+        
+        var tsDataResult = tsData.CalculateResults();
+        await resultRepository.AddOrUpdateResult(origin, tsDataResult);
+        
+        await unitOfWork.SaveChangesAsync();
+        
+        return true; // TODO change to detailed JSON
+    }
+    
+    private string GetFileNameHash(string rowFileName)
+    {
+        var fileName = Path.GetFileName(rowFileName);
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(fileName)));
     }
 
     private List<TimescaleData> ParseUpload(Stream stream)
@@ -58,21 +78,5 @@ public class UploadService(IValueRepository valueRepository, ICommitable unitOfW
         }
 
         return records.Count == 0 ? throw new ValidationException("File", "File has no records.") : records;
-    }
-
-    private string GetFileNameHash(string rowFileName)
-    {
-        var fileName = Path.GetFileName(rowFileName);
-        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(fileName)));
-    }
-
-    private async Task SaveRecords(string fileNameHash, IList<TimescaleData> records) // TODO to interface
-    {
-        var origin = await valueRepository.GetOrCreateOrigin(fileNameHash);
-
-        var values = records.Select(x => x.ToValueModel(origin)).ToList();
-        await valueRepository.AddOrUpdateValues(origin, values);
-
-        await unitOfWork.SaveChangesAsync();
     }
 }
