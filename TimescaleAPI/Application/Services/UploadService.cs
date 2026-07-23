@@ -5,15 +5,13 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using TimescaleAPI.Infrastructure;
+using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Utilities;
-using TimescaleAPI.Infrastructure.Models;
 using ValidationException = TimescaleAPI.Application.Exceptions.ValidationException;
 
 namespace TimescaleAPI.Application.Services;
 
-public class UploadService(MetricsContext context, IValidator<TimescaleData> validator, ILogger<UploadService> logger)
+public class UploadService(IValueRepository valueRepository, ICommitable unitOfWork, IValidator<TimescaleData> validator, ILogger<UploadService> logger)
 {
     private const int MaxRecords = 10_000;
 
@@ -23,17 +21,18 @@ public class UploadService(MetricsContext context, IValidator<TimescaleData> val
 
         var fileName = GetFileNameHash(rowFileName);
         await SaveRecords(fileName, tsData);
-        return true; // TODO change
+        return true;
     }
 
     private List<TimescaleData> ParseUpload(Stream stream)
     {
         using var reader = new StreamReader(stream);
         var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" };
-        var records = new List<TimescaleData>();
         using var csv = new CsvReader(reader, config);
         csv.Read();
         csv.ReadHeader();
+
+        var records = new List<TimescaleData>();
         while (csv.Read())
         {
             try
@@ -53,8 +52,8 @@ public class UploadService(MetricsContext context, IValidator<TimescaleData> val
             }
             catch (TypeConverterException ex)
             {
-                    throw new ValidationException("File",
-                        $"Column {ex.Context.Reader.HeaderRecord[ex.Context.Reader.CurrentIndex]}, Row {ex.Context.Parser.Row}: Invalid value type '{ex.Text}'.");
+                throw new ValidationException("File",
+                    $"Column {ex.Context.Reader.HeaderRecord[ex.Context.Reader.CurrentIndex]}, Row {ex.Context.Parser.Row}: Invalid value type '{ex.Text}'.");
             }
         }
 
@@ -69,32 +68,11 @@ public class UploadService(MetricsContext context, IValidator<TimescaleData> val
 
     private async Task SaveRecords(string fileNameHash, IList<TimescaleData> records) // TODO to interface
     {
-        var origin = await context.Origins.FirstOrDefaultAsync(x => x.NameHash == fileNameHash);
-
-        if (origin == null)
-        {
-            origin = Origin.CreateOrigin(fileNameHash);
-            await context.AddAsync(origin);
-        }
+        var origin = await valueRepository.GetOrCreateOrigin(fileNameHash);
 
         var values = records.Select(x => x.ToValueModel(origin)).ToList();
-        var existingValues = await context.Values
-            .Where(x => x.OriginId == origin.Id)
-            .ToDictionaryAsync(x => x.Date);
+        await valueRepository.AddOrUpdateValues(origin, values);
 
-        foreach (var value in values)
-        {
-            if (existingValues.TryGetValue(value.Date, out var entity))
-            {
-                entity.ExecutionTime = value.ExecutionTime;
-                entity.IndicatorValue = value.IndicatorValue;
-            }
-            else
-            {
-                context.Values.Add(value);
-            }
-        }
-
-        await context.SaveChangesAsync(); // TODO remove 
+        await unitOfWork.SaveChangesAsync();
     }
 }

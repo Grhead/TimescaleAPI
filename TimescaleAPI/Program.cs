@@ -2,9 +2,11 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using TimescaleAPI.API;
 using TimescaleAPI.Application;
+using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Services;
 using TimescaleAPI.Application.Utilities;
 using TimescaleAPI.Infrastructure;
+using TimescaleAPI.Infrastructure.Repositories;
 
 namespace TimescaleAPI;
 
@@ -21,14 +23,16 @@ public class Program
         builder.Services.AddDbContext<MetricsContext>(options =>
             options.UseNpgsql(connectionString));
 
-        builder.Services.AddSingleton<IValueRepository, ValueRepository>();
+        builder.Services.AddScoped<IResultRepository, ResultRepository>();
+        builder.Services.AddScoped<IValueRepository, ValueRepository>();
+        builder.Services.AddScoped<ICommitable, UnitOfWork>();
         
         builder.Services.AddProblemDetails();
         builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
         
-        
         builder.Services.AddScoped<IValidator<TimescaleData>, TimescaleDataValidator>();
         builder.Services.AddScoped<UploadService>();
+        
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
