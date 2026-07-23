@@ -9,16 +9,16 @@ public class TimescaleDataValidator : AbstractValidator<TimescaleData>
     public TimescaleDataValidator()
     {
         RuleFor(timescaleData => timescaleData.Date)
-            .NotEmpty().WithMessage("Date cannot be null")
+            .NotNull().WithMessage("Date cannot be null")
             .InclusiveBetween(_minDate, DateTime.UtcNow)
             .WithMessage("The date cannot be earlier than January 1, 2000, or later than today.");
 
         RuleFor(timescaleData => timescaleData.ExecutionTime)
-            .NotEmpty().WithMessage("Execution time cannot be null")
+            .NotNull().WithMessage("Execution time cannot be null")
             .GreaterThan(0).WithMessage("Execution time must be greater than zero");
 
         RuleFor(timescaleData => timescaleData.Value)
-            .NotEmpty().WithMessage("Value cannot be null")
+            .NotNull().WithMessage("Value cannot be null")
             .GreaterThan(0).WithMessage("Value must be greater than zero");
     }
 }

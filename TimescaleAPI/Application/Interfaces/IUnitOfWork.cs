@@ -1,6 +1,6 @@
 ﻿namespace TimescaleAPI.Application.Interfaces;
 
-public interface ICommitable
+public interface IUnitOfWork
 {
     public Task SaveChangesAsync();
 }

@@ -9,9 +9,9 @@ public static class TimescaleDataConverter
         var newValue = new Value
         {
             Id = Guid.NewGuid(),
-            Date = dto.Date.Value.ToUniversalTime(),
-            ExecutionTime = (int)dto.ExecutionTime,
-            IndicatorValue = (double)dto.Value,
+            Date = dto.Date!.Value.ToUniversalTime(),
+            ExecutionTime = (int)dto.ExecutionTime!,
+            IndicatorValue = (double)dto.Value!,
             Origin = origin
         };
         return newValue;

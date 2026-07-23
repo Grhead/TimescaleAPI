@@ -25,12 +25,13 @@ public class Program
 
         builder.Services.AddScoped<IResultRepository, ResultRepository>();
         builder.Services.AddScoped<IValueRepository, ValueRepository>();
-        builder.Services.AddScoped<ICommitable, UnitOfWork>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddProblemDetails();
         builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
         
         builder.Services.AddScoped<IValidator<TimescaleData>, TimescaleDataValidator>();
+        builder.Services.AddScoped<IResultCalculator, ResultCalculator>();
         builder.Services.AddScoped<UploadService>();
         
         var app = builder.Build();

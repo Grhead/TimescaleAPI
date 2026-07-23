@@ -2,7 +2,7 @@
 
 namespace TimescaleAPI.Infrastructure.Repositories;
 
-public class UnitOfWork(MetricsContext context) : ICommitable
+public class UnitOfWork(MetricsContext context) : IUnitOfWork
 {
     public async Task SaveChangesAsync()
     {

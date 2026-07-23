@@ -14,8 +14,9 @@ namespace TimescaleAPI.Application.Services;
 public class UploadService(
     IValueRepository valueRepository, 
     IResultRepository resultRepository, 
-    ICommitable unitOfWork, 
-    IValidator<TimescaleData> validator, 
+    IUnitOfWork unitOfWork, 
+    IValidator<TimescaleData> validator,
+    IResultCalculator resultCalculator,
     ILogger<UploadService> logger)
 {
     private const int MaxRecords = 10_000;
@@ -30,7 +31,7 @@ public class UploadService(
         
         await valueRepository.AddOrUpdateValues(origin, values);
         
-        var tsDataResult = tsData.CalculateResults();
+        var tsDataResult = resultCalculator.Calculate(tsData);
         await resultRepository.AddOrUpdateResult(origin, tsDataResult);
         
         await unitOfWork.SaveChangesAsync();
