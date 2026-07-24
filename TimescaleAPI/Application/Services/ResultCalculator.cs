@@ -12,7 +12,7 @@ public sealed class ResultCalculator : IResultCalculator
         var stats = new TimescaleStatistics();
         foreach (var record in records)
             stats.Add(record);
-        
+
         return new Result(
             stats.DeltaDate,
             stats.MinDate.ToUniversalTime(),
@@ -22,7 +22,7 @@ public sealed class ResultCalculator : IResultCalculator
             stats.MaxValue,
             stats.MinValue);
     }
-    
+
     private static double CalculateMedian(IReadOnlyList<TimescaleValueDto> records)
     {
         var values = records

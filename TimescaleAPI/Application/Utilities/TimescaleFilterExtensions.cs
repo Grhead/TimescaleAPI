@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-using TimescaleAPI.Application.DTOs;
+﻿using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.Models;
 
 namespace TimescaleAPI.Application.Utilities;

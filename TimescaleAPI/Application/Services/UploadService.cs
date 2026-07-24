@@ -45,7 +45,7 @@ public class UploadService(
 
         return $"Successfully processed {tsData.Count} rows from {fileName}";
     }
-    
+
     private List<TimescaleValueDto> ParseUpload(Stream stream)
     {
         using var reader = new StreamReader(stream);
@@ -56,29 +56,22 @@ public class UploadService(
 
         var records = new List<TimescaleValueDto>();
         while (csv.Read())
-        {
             try
             {
                 var rec = csv.GetRecord<TimescaleValueDto>();
                 var result = validator.Validate(rec);
-                if (!result.IsValid)
-                {
-                    throw new ValidationException(result.ToDictionary());
-                }
+                if (!result.IsValid) throw new ValidationException(result.ToDictionary());
 
                 records.Add(rec);
                 if (records.Count >= MaxRecords)
-                {
                     throw new ValidationException("File", $"File has more than {MaxRecords} records.");
-                }
             }
             catch (TypeConverterException ex)
             {
-                throw new ValidationException("File", 
+                throw new ValidationException("File",
                     $"Column {ex.Context.Reader.HeaderRecord[ex.Context.Reader.CurrentIndex]}, " +
-                        $"Row {ex.Context.Parser.Row}: Invalid value type '{ex.Text}'.");
+                    $"Row {ex.Context.Parser.Row}: Invalid value type '{ex.Text}'.");
             }
-        }
 
         return records.Count == 0 ? throw new ValidationException("File", "File has no records.") : records;
     }

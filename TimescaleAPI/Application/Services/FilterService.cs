@@ -6,7 +6,8 @@ namespace TimescaleAPI.Application.Services;
 
 public class FilterService(IResultRepository resultRepository, ILogger<FilterService> logger) : IFilterService
 {
-    public async Task<List<TimescaleResultDto>> GetResults(TimescaleFilterDto filterDto, CancellationToken cancellationToken)
+    public async Task<List<TimescaleResultDto>> GetResults(TimescaleFilterDto filterDto,
+        CancellationToken cancellationToken)
     {
         var resultsByFilters = await resultRepository.GetResultsByFiltersAsync(filterDto, cancellationToken);
 

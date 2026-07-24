@@ -25,7 +25,8 @@ public class ValueRepository(MetricsContext context) : IValueRepository
         return origin;
     }
 
-    public async Task ReplaceValuesAsync(Origin origin, IReadOnlyCollection<Value> values, CancellationToken cancellationToken)
+    public async Task ReplaceValuesAsync(Origin origin, IReadOnlyCollection<Value> values,
+        CancellationToken cancellationToken)
     {
         await context.Values
             .Where(x => x.OriginId == origin.Id)
@@ -36,7 +37,7 @@ public class ValueRepository(MetricsContext context) : IValueRepository
 
     public async Task<List<Value>> GetLastValues(string fileName)
     {
-         return await context.Values
+        return await context.Values
             .AsNoTracking()
             .Where(x => x.Origin.FileName == fileName)
             .Include(result => result.Origin)

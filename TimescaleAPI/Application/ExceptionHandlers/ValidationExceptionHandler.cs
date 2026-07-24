@@ -6,12 +6,10 @@ namespace TimescaleAPI.Application.ExceptionHandlers;
 
 public class ValidationExceptionHandler(ILogger<ValidationExceptionHandler> logger) : IExceptionHandler
 {
-    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception,
+        CancellationToken cancellationToken)
     {
-        if (exception is not ValidationException validation)
-        {
-            return false;
-        }
+        if (exception is not ValidationException validation) return false;
 
         logger.LogWarning("Validation failed: {Message}", validation.Message);
 

@@ -14,6 +14,7 @@ public class Result
         MaxValue = maxValue;
         MinValue = minValue;
     }
+
     public Guid Id { get; private set; }
 
     public long DeltaDate { get; private set; }

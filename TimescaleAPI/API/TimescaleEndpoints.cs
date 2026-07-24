@@ -8,7 +8,7 @@ public static class TimescaleEndpoints
     private const int MaxFileSizeB = 10485760;
 
     private static readonly string[] AllowedFileTypes = [".csv"];
-    
+
     public static void RegisterTimescaleEndpoints(this WebApplication app)
     {
         app.MapPost("/metrics",
@@ -23,9 +23,7 @@ public static class TimescaleEndpoints
                     }
 
                     if (!AllowedFileTypes.Contains(Path.GetExtension(file.FileName), StringComparer.OrdinalIgnoreCase))
-                    {
                         return Results.BadRequest("Invalid file type");
-                    }
 
                     var result = await uploadService.ProcessUpload(file.OpenReadStream(), file.FileName,
                         cancellationToken);

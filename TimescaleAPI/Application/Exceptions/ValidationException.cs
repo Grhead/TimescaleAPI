@@ -5,12 +5,12 @@ namespace TimescaleAPI.Application.Exceptions;
 public sealed class ValidationException
     : MetricsException
 {
-    public IDictionary<string, string[]> Errors { get; }
     public ValidationException(IDictionary<string, string[]> errors)
         : base("One or more validation errors occurred.", HttpStatusCode.BadRequest)
     {
         Errors = errors;
     }
+
     public ValidationException(string field, string error)
         : base("One or more validation errors occurred.", HttpStatusCode.BadRequest)
     {
@@ -19,4 +19,6 @@ public sealed class ValidationException
             { field, [error] }
         };
     }
+
+    public IDictionary<string, string[]> Errors { get; }
 }

@@ -2,5 +2,5 @@
 
 public interface IUploadService
 {
-    public  Task<string> ProcessUpload(Stream stream, string rowFileName, CancellationToken cancellationToken);
+    public Task<string> ProcessUpload(Stream stream, string rowFileName, CancellationToken cancellationToken);
 }
