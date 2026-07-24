@@ -4,7 +4,7 @@ using TimescaleAPI.Application.Utilities;
 
 namespace TimescaleAPI.Application.Services;
 
-public class ValueService(IValueRepository valueRepository)
+public class ValueService(IValueRepository valueRepository) : IValueService
 {
     public async Task<FileValuesDto> GetLastValues(string fileName)
     {

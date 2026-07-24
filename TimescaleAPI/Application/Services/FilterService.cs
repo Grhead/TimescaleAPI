@@ -4,7 +4,7 @@ using TimescaleAPI.Application.Utilities;
 
 namespace TimescaleAPI.Application.Services;
 
-public class FilterService(IResultRepository resultRepository, ILogger<FilterService> logger)
+public class FilterService(IResultRepository resultRepository, ILogger<FilterService> logger) : IFilterService
 {
     public async Task<List<TimescaleResultDto>> GetResults(TimescaleFilterDto filterDto, CancellationToken cancellationToken)
     {

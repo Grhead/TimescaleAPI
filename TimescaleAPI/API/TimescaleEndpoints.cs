@@ -1,5 +1,5 @@
 ﻿using TimescaleAPI.Application.DTOs;
-using TimescaleAPI.Application.Services;
+using TimescaleAPI.Application.Interfaces;
 
 namespace TimescaleAPI.API;
 
@@ -12,7 +12,7 @@ public static class TimescaleEndpoints
     public static void RegisterTimescaleEndpoints(this WebApplication app)
     {
         app.MapPost("/metrics",
-                async (IFormFile file, UploadService uploadService, CancellationToken cancellationToken) =>
+                async (IFormFile file, IUploadService uploadService, CancellationToken cancellationToken) =>
                 {
                     switch (file.Length)
                     {
@@ -33,14 +33,14 @@ public static class TimescaleEndpoints
                 })
             .DisableAntiforgery();
 
-        app.MapGet("/results", async (FilterService filterService, [AsParameters] TimescaleFilterDto filterDto,
+        app.MapGet("/results", async (IFilterService filterService, [AsParameters] TimescaleFilterDto filterDto,
             CancellationToken cancellationToken) =>
         {
             var results = await filterService.GetResults(filterDto, cancellationToken);
             return results.Count == 0 ? Results.NoContent() : Results.Ok(results);
         });
 
-        app.MapGet("/values/latest", async (ValueService valueService, string fileName) =>
+        app.MapGet("/values/latest", async (IValueService valueService, string fileName) =>
         {
             var fileValuesDto = await valueService.GetLastValues(fileName);
             return fileValuesDto.Values.Length == 0 ? Results.NoContent() : Results.Ok(fileValuesDto);

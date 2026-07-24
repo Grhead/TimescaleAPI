@@ -33,9 +33,9 @@ public class Program
         
         builder.Services.AddScoped<IValidator<TimescaleValueDto>, TimescaleValueValidator>();
         builder.Services.AddScoped<IResultCalculator, ResultCalculator>();
-        builder.Services.AddScoped<UploadService>();
-        builder.Services.AddScoped<FilterService>();
-        builder.Services.AddScoped<ValueService>();
+        builder.Services.AddScoped<IUploadService, UploadService>();
+        builder.Services.AddScoped<IFilterService, FilterService>();
+        builder.Services.AddScoped<IValueService, ValueService>();
         
         var app = builder.Build();
 

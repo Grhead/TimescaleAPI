@@ -16,7 +16,7 @@ public class UploadService(
     IUnitOfWork unitOfWork,
     IValidator<TimescaleValueDto> validator,
     IResultCalculator resultCalculator,
-    ILogger<UploadService> logger)
+    ILogger<UploadService> logger) : IUploadService
 {
     private const int MaxRecords = 10_000;
 
