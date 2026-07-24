@@ -3,11 +3,11 @@ using TimescaleAPI.Application.DTOs;
 
 namespace TimescaleAPI.Application.Utilities;
 
-public class TimescaleDataValidator : AbstractValidator<TimescaleValueDto>
+public class TimescaleValueValidator : AbstractValidator<TimescaleValueDto>
 {
     private readonly DateTime _minDate = new(2000, 1, 1);
 
-    public TimescaleDataValidator()
+    public TimescaleValueValidator()
     {
         RuleFor(timescaleData => timescaleData.Date)
             .Cascade(CascadeMode.Stop)

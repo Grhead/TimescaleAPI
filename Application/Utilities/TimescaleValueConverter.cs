@@ -3,7 +3,7 @@ using TimescaleAPI.Application.Models;
 
 namespace TimescaleAPI.Application.Utilities;
 
-public static class TimescaleDataConverter
+public static class TimescaleValueConverter
 {
     public static Value ToValueModel(this TimescaleValueDto dto, Origin origin)
     {
@@ -15,5 +15,10 @@ public static class TimescaleDataConverter
         );
         newValue.SetOrigin(origin);
         return newValue;
+    }
+
+    public static TimescaleValueDto ToValuesDto(this Value value)
+    {
+        return new TimescaleValueDto(value.Date, value.ExecutionTime, value.IndicatorValue);
     }
 }

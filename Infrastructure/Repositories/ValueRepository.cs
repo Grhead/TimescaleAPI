@@ -35,4 +35,13 @@ public class ValueRepository(MetricsContext context) : IValueRepository
             }
         }
     }
+
+    public List<Value> GetLastValues(string fileName)
+    {
+        return context.Values
+            .AsNoTracking()
+            .Where(x => x.Origin.FileName == fileName).Include(result => result.Origin)
+            .OrderBy(x => x.Date)
+            .ToList();
+    }
 }

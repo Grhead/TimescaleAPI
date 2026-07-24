@@ -1,7 +1,6 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using TimescaleAPI.API;
-using TimescaleAPI.Application;
 using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.ExceptionHandlers;
 using TimescaleAPI.Application.Interfaces;
@@ -32,10 +31,11 @@ public class Program
         builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
         builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
         
-        builder.Services.AddScoped<IValidator<TimescaleValueDto>, TimescaleDataValidator>();
+        builder.Services.AddScoped<IValidator<TimescaleValueDto>, TimescaleValueValidator>();
         builder.Services.AddScoped<IResultCalculator, ResultCalculator>();
         builder.Services.AddScoped<UploadService>();
         builder.Services.AddScoped<FilterService>();
+        builder.Services.AddScoped<ValueService>();
         
         var app = builder.Build();
 

@@ -32,19 +32,4 @@ public class ResultRepository(MetricsContext context, ILogger<ResultRepository> 
 
         return await resultsQuery.Include(x => x.Origin).ToListAsync(cancellationToken);
     }
-
-    public async Task<string?> GetFileNameByOrigin(
-        Guid originId,
-        CancellationToken cancellationToken)
-    {
-        return await context.Origins
-            .Where(x => x.Id == originId)
-            .Select(x => x.FileName)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public bool GetLastResults(Origin origin)
-    {
-        throw new NotImplementedException();
-    }
 }
