@@ -30,7 +30,7 @@ public class UploadService(
             var origin = await valueRepository.GetOrAddOriginAsync(fileName, cancellationToken);
             var values = tsData.Select(x => x.ToValueModel(origin)).ToList();
 
-            await valueRepository.AddOrUpdateValuesAsync(origin, values, cancellationToken);
+            await valueRepository.ReplaceValuesAsync(origin, values, cancellationToken);
 
             var tsDataResult = resultCalculator.Calculate(tsData);
             await resultRepository.AddOrUpdateResultAsync(origin, tsDataResult, cancellationToken);

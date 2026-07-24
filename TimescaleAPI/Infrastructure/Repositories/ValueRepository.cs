@@ -25,23 +25,13 @@ public class ValueRepository(MetricsContext context) : IValueRepository
         return origin;
     }
 
-    public async Task AddOrUpdateValuesAsync(Origin origin, List<Value> values, CancellationToken cancellationToken)
+    public async Task ReplaceValuesAsync(Origin origin, IReadOnlyCollection<Value> values, CancellationToken cancellationToken)
     {
-        var existingValues = await context.Values
+        await context.Values
             .Where(x => x.OriginId == origin.Id)
-            .ToDictionaryAsync(x => x.Date, cancellationToken);
+            .ExecuteDeleteAsync(cancellationToken);
 
-        foreach (var value in values)
-        {
-            if (existingValues.TryGetValue(value.Date, out var entity))
-            {
-                entity.UpdateFrom(value);
-            }
-            else
-            {
-                context.Values.Add(value);
-            }
-        }
+        await context.Values.AddRangeAsync(values, cancellationToken);
     }
 
     public async Task<List<Value>> GetLastValues(string fileName)
@@ -50,7 +40,7 @@ public class ValueRepository(MetricsContext context) : IValueRepository
             .AsNoTracking()
             .Where(x => x.Origin.FileName == fileName)
             .Include(result => result.Origin)
-            .OrderBy(x => x.Date)
+            .OrderByDescending(x => x.Date).Take(10)
             .ToListAsync();
     }
 }
