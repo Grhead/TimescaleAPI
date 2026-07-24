@@ -5,6 +5,6 @@ namespace TimescaleAPI.Application.Interfaces;
 
 public interface IResultRepository
 {
-    public Task AddOrUpdateResult(Origin origin, Result result, CancellationToken cancellationToken);
+    public Task AddOrUpdateResultAsync(Origin origin, Result result, CancellationToken cancellationToken);
     public Task<List<Result>> GetResultsByFiltersAsync(TimescaleFilterDto filterDto, CancellationToken cancellationToken);
 }

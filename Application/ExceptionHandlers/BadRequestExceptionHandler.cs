@@ -18,7 +18,7 @@ public class BadRequestExceptionHandler(ILogger<BadRequestExceptionHandler> logg
         
         await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
         {
-            Status = 400,
+            Status = httpContext.Response.StatusCode,
             Title = "Invalid request parameters",
             Detail = "One or more query parameters have an invalid format."
         }, cancellationToken);

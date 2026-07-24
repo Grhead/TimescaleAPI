@@ -6,9 +6,9 @@ namespace TimescaleAPI.Application.Services;
 
 public class ValueService(IValueRepository valueRepository)
 {
-    public FileValuesDto GetLastValues(string fileName)
+    public async Task<FileValuesDto> GetLastValues(string fileName)
     {
-        var lastValues = valueRepository.GetLastValues(fileName);
+        var lastValues = await valueRepository.GetLastValues(fileName);
         var fileValuesDto = new FileValuesDto(fileName, lastValues.Select(x => x.ToValuesDto()).ToArray());
         return fileValuesDto;
     }

@@ -4,8 +4,8 @@ namespace TimescaleAPI.Application.Interfaces;
 
 public interface IValueRepository
 {
-    public Task<Origin> GetOrAddOrigin(string fileName, CancellationToken cancellationToken);
-    public Task AddOrUpdateValues(Origin origin, List<Value> records, CancellationToken cancellationToken);
+    public Task<Origin> GetOrAddOriginAsync(string fileName, CancellationToken cancellationToken);
+    public Task AddOrUpdateValuesAsync(Origin origin, List<Value> records, CancellationToken cancellationToken);
     
-    public List<Value> GetLastValues(string fileName);
+    public Task<List<Value>> GetLastValues(string fileName);
 }

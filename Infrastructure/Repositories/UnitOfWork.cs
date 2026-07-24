@@ -3,7 +3,7 @@ using TimescaleAPI.Application.Interfaces;
 
 namespace TimescaleAPI.Infrastructure.Repositories;
 
-public class UnitOfWork(MetricsContext context) : IUnitOfWork
+public class UnitOfWork(MetricsContext context) : IUnitOfWork, IAsyncDisposable
 {
     private IDbContextTransaction? _transaction;
 
@@ -32,5 +32,15 @@ public class UnitOfWork(MetricsContext context) : IUnitOfWork
         await _transaction.RollbackAsync(cancellationToken);
         await _transaction.DisposeAsync();
         _transaction = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_transaction is not null)
+        {
+            await _transaction.RollbackAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
     }
 }

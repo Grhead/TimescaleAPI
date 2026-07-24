@@ -29,7 +29,7 @@ public static class TimescaleEndpoints
 
                     var result = await uploadService.ProcessUpload(file.OpenReadStream(), file.FileName,
                         cancellationToken);
-                    return Results.Ok(result); // TODO return details
+                    return Results.Ok(result);
                 })
             .DisableAntiforgery();
 
@@ -40,9 +40,9 @@ public static class TimescaleEndpoints
             return results.Count == 0 ? Results.NoContent() : Results.Ok(results);
         });
 
-        app.MapGet("/values/latest", (ValueService valueService, string fileName) =>
+        app.MapGet("/values/latest", async (ValueService valueService, string fileName) =>
         {
-            var fileValuesDto = valueService.GetLastValues(fileName);
+            var fileValuesDto = await valueService.GetLastValues(fileName);
             return fileValuesDto.Values.Length == 0 ? Results.NoContent() : Results.Ok(fileValuesDto);
         });
     }

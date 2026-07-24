@@ -1,6 +1,4 @@
 ﻿using System.Globalization;
-using System.Security.Cryptography;
-using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
@@ -22,38 +20,32 @@ public class UploadService(
 {
     private const int MaxRecords = 10_000;
 
-    public async Task<bool> ProcessUpload(Stream stream, string rowFileName, CancellationToken cancellationToken)
+    public async Task<string> ProcessUpload(Stream stream, string rowFileName, CancellationToken cancellationToken)
     {
         var tsData = ParseUpload(stream);
-        var fileName = GetFileName(rowFileName);
+        var fileName = Path.GetFileName(rowFileName);
         await unitOfWork.BeginAsync(cancellationToken);
         try
         {
-            var origin = await valueRepository.GetOrAddOrigin(fileName, cancellationToken);
+            var origin = await valueRepository.GetOrAddOriginAsync(fileName, cancellationToken);
             var values = tsData.Select(x => x.ToValueModel(origin)).ToList();
 
-            await valueRepository.AddOrUpdateValues(origin, values, cancellationToken);
+            await valueRepository.AddOrUpdateValuesAsync(origin, values, cancellationToken);
 
             var tsDataResult = resultCalculator.Calculate(tsData);
-            await resultRepository.AddOrUpdateResult(origin, tsDataResult, cancellationToken);
+            await resultRepository.AddOrUpdateResultAsync(origin, tsDataResult, cancellationToken);
 
             await unitOfWork.CommitAsync(cancellationToken);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             await unitOfWork.RollbackAsync(cancellationToken);
             throw;
         }
 
-        return true; // TODO change to detailed JSON
+        return $"Successfully processed {tsData.Count} rows from {fileName}";
     }
-
-    private static string GetFileName(string rowFileName)
-    {
-        var fileName = Path.GetFileName(rowFileName);
-        return fileName;
-    }
-
+    
     private List<TimescaleValueDto> ParseUpload(Stream stream)
     {
         using var reader = new StreamReader(stream);

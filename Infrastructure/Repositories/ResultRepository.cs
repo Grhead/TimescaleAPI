@@ -8,7 +8,7 @@ namespace TimescaleAPI.Infrastructure.Repositories;
 
 public class ResultRepository(MetricsContext context, ILogger<ResultRepository> logger) : IResultRepository
 {
-    public async Task AddOrUpdateResult(Origin origin, Result result, CancellationToken cancellationToken)
+    public async Task AddOrUpdateResultAsync(Origin origin, Result result, CancellationToken cancellationToken)
     {
         var existingResult = await context.Results
             .FirstOrDefaultAsync(x => x.OriginId == origin.Id, cancellationToken);

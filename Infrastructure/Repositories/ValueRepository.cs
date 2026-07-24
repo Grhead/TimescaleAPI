@@ -6,18 +6,26 @@ namespace TimescaleAPI.Infrastructure.Repositories;
 
 public class ValueRepository(MetricsContext context) : IValueRepository
 {
-    public async Task<Origin> GetOrAddOrigin(string fileName, CancellationToken cancellationToken)
+    public async Task<Origin> GetOrAddOriginAsync(string fileName, CancellationToken cancellationToken)
     {
         var origin = await context.Origins.FirstOrDefaultAsync(x => x.FileName == fileName, cancellationToken);
         if (origin != null) return origin;
 
         origin = new Origin(fileName);
-        await context.AddAsync(origin, cancellationToken);
+        try
+        {
+            await context.AddAsync(origin, cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            context.Entry(origin).State = EntityState.Detached;
+            origin = await context.Origins.FirstAsync(x => x.FileName == fileName, cancellationToken);
+        }
 
         return origin;
     }
 
-    public async Task AddOrUpdateValues(Origin origin, List<Value> values, CancellationToken cancellationToken)
+    public async Task AddOrUpdateValuesAsync(Origin origin, List<Value> values, CancellationToken cancellationToken)
     {
         var existingValues = await context.Values
             .Where(x => x.OriginId == origin.Id)
@@ -36,12 +44,13 @@ public class ValueRepository(MetricsContext context) : IValueRepository
         }
     }
 
-    public List<Value> GetLastValues(string fileName)
+    public async Task<List<Value>> GetLastValues(string fileName)
     {
-        return context.Values
+         return await context.Values
             .AsNoTracking()
-            .Where(x => x.Origin.FileName == fileName).Include(result => result.Origin)
+            .Where(x => x.Origin.FileName == fileName)
+            .Include(result => result.Origin)
             .OrderBy(x => x.Date)
-            .ToList();
+            .ToListAsync();
     }
 }

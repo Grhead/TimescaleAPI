@@ -2,10 +2,6 @@
 
 public class Origin
 {
-    protected Origin()
-    {
-        
-    }
     public Origin(string fileName)
     {
         Id = Guid.NewGuid();
@@ -14,6 +10,6 @@ public class Origin
     public Guid Id { get; private set; }
     public string FileName { get; private set; }
     
-    public ICollection<Value> Values { get; set; } = new List<Value>();
-    public ICollection<Result> Results { get; set; } = new List<Result>();
+    public ICollection<Value> Values { get; private set; }
+    public ICollection<Result> Results { get; private set; }
 }
