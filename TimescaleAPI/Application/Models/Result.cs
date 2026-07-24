@@ -2,10 +2,6 @@
 
 public class Result
 {
-    public Result()
-    {
-    }
-
     public Result(long deltaDate, DateTime minDate, double avgExecutionTime, double avgValue,
         double medianValue, double maxValue, double minValue)
     {

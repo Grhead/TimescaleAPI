@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TimescaleAPI.Infrastructure;
@@ -11,9 +12,11 @@ using TimescaleAPI.Infrastructure;
 namespace TimescaleAPI.Migrations
 {
     [DbContext(typeof(MetricsContext))]
-    partial class MetricsContextModelSnapshot : ModelSnapshot
+    [Migration("20260724083147_AddReverseRelation")]
+    partial class AddReverseRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,13 +31,13 @@ namespace TimescaleAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("NameHash")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileName")
+                    b.HasIndex("NameHash")
                         .IsUnique();
 
                     b.ToTable("Origins");

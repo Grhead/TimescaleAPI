@@ -2,18 +2,13 @@
 
 public class Value
 {
-    public Value()
-    {
-        
-    }
-
-    public Value(DateTime date, int executionTime, double indicatorValue, Origin origin)
+    public Value(DateTime date, int executionTime, double indicatorValue)
     {
         Id = Guid.NewGuid();
         Date = date;
         ExecutionTime = executionTime;
         IndicatorValue = indicatorValue;
-        Origin = origin;
+        
     }
     public Guid Id { get; private set; }
     public DateTime Date { get; private set; }
@@ -22,6 +17,11 @@ public class Value
 
     public Guid OriginId { get; private set; }
     public Origin Origin { get; private set; }
+    
+    public void SetOrigin(Origin origin)
+    {
+        Origin = origin;
+    }
     
     public void UpdateFrom(Value prevValue)
     {

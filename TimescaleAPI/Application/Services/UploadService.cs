@@ -5,6 +5,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using FluentValidation;
+using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Utilities;
 using ValidationException = TimescaleAPI.Application.Exceptions.ValidationException;
@@ -12,40 +13,48 @@ using ValidationException = TimescaleAPI.Application.Exceptions.ValidationExcept
 namespace TimescaleAPI.Application.Services;
 
 public class UploadService(
-    IValueRepository valueRepository, 
-    IResultRepository resultRepository, 
-    IUnitOfWork unitOfWork, 
-    IValidator<TimescaleData> validator,
+    IValueRepository valueRepository,
+    IResultRepository resultRepository,
+    IUnitOfWork unitOfWork,
+    IValidator<TimescaleValueDto> validator,
     IResultCalculator resultCalculator,
     ILogger<UploadService> logger)
 {
     private const int MaxRecords = 10_000;
 
-    public async Task<bool> ProcessUpload(Stream stream, string rowFileName)
+    public async Task<bool> ProcessUpload(Stream stream, string rowFileName, CancellationToken cancellationToken)
     {
         var tsData = ParseUpload(stream);
-        var fileName = GetFileNameHash(rowFileName);
-        
-        var origin = await valueRepository.GetOrAddOrigin(fileName);
-        var values = tsData.Select(x => x.ToValueModel(origin)).ToList();
-        
-        await valueRepository.AddOrUpdateValues(origin, values);
-        
-        var tsDataResult = resultCalculator.Calculate(tsData);
-        await resultRepository.AddOrUpdateResult(origin, tsDataResult);
-        
-        await unitOfWork.SaveChangesAsync();
-        
+        var fileName = GetFileName(rowFileName);
+        await unitOfWork.BeginAsync(cancellationToken);
+        try
+        {
+            var origin = await valueRepository.GetOrAddOrigin(fileName, cancellationToken);
+            var values = tsData.Select(x => x.ToValueModel(origin)).ToList();
+
+            await valueRepository.AddOrUpdateValues(origin, values, cancellationToken);
+
+            var tsDataResult = resultCalculator.Calculate(tsData);
+            await resultRepository.AddOrUpdateResult(origin, tsDataResult, cancellationToken);
+
+            await unitOfWork.CommitAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            await unitOfWork.RollbackAsync(cancellationToken);
+            throw;
+        }
+
         return true; // TODO change to detailed JSON
     }
-    
-    private string GetFileNameHash(string rowFileName)
+
+    private static string GetFileName(string rowFileName)
     {
         var fileName = Path.GetFileName(rowFileName);
-        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(fileName)));
+        return fileName;
     }
 
-    private List<TimescaleData> ParseUpload(Stream stream)
+    private List<TimescaleValueDto> ParseUpload(Stream stream)
     {
         using var reader = new StreamReader(stream);
         var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" };
@@ -53,12 +62,12 @@ public class UploadService(
         csv.Read();
         csv.ReadHeader();
 
-        var records = new List<TimescaleData>();
+        var records = new List<TimescaleValueDto>();
         while (csv.Read())
         {
             try
             {
-                var rec = csv.GetRecord<TimescaleData>();
+                var rec = csv.GetRecord<TimescaleValueDto>();
                 var result = validator.Validate(rec);
                 if (!result.IsValid)
                 {
@@ -73,8 +82,9 @@ public class UploadService(
             }
             catch (TypeConverterException ex)
             {
-                throw new ValidationException("File",
-                    $"Column {ex.Context.Reader.HeaderRecord[ex.Context.Reader.CurrentIndex]}, Row {ex.Context.Parser.Row}: Invalid value type '{ex.Text}'.");
+                throw new ValidationException("File", 
+                    $"Column {ex.Context.Reader.HeaderRecord[ex.Context.Reader.CurrentIndex]}, " +
+                        $"Row {ex.Context.Parser.Row}: Invalid value type '{ex.Text}'.");
             }
         }
 

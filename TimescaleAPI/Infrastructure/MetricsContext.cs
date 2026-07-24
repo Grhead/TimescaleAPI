@@ -16,7 +16,7 @@ public class MetricsContext(DbContextOptions<MetricsContext> options) : DbContex
         modelBuilder.Entity<Result>().HasKey(p => p.Id);
         
         modelBuilder.Entity<Origin>()
-            .HasIndex(x => x.NameHash)
+            .HasIndex(x => x.FileName)
             .IsUnique();
     }
 }

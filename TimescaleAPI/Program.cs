@@ -2,6 +2,8 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using TimescaleAPI.API;
 using TimescaleAPI.Application;
+using TimescaleAPI.Application.DTOs;
+using TimescaleAPI.Application.ExceptionHandlers;
 using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Services;
 using TimescaleAPI.Application.Utilities;
@@ -27,23 +29,36 @@ public class Program
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
         builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
         
-        builder.Services.AddScoped<IValidator<TimescaleData>, TimescaleDataValidator>();
+        builder.Services.AddScoped<IValidator<TimescaleValueDto>, TimescaleDataValidator>();
         builder.Services.AddScoped<IResultCalculator, ResultCalculator>();
         builder.Services.AddScoped<UploadService>();
+        builder.Services.AddScoped<FilterService>();
         
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/openapi/v1.json", "v1");
+            });
         }
-
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MetricsContext>();
+            db.Origins.Select(x => x.Id).Any(); 
+            db.Database.CanConnect(); 
+        }
+        
+        app.UseExceptionHandler();
         app.UseHttpsRedirection();
         app.UseRouting();
+        
         app.RegisterTimescaleEndpoints();
-        app.UseExceptionHandler();
         
         app.Run();
     }

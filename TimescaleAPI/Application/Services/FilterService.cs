@@ -1,0 +1,20 @@
+﻿using TimescaleAPI.Application.DTOs;
+using TimescaleAPI.Application.Interfaces;
+using TimescaleAPI.Application.Models;
+using TimescaleAPI.Application.Utilities;
+
+namespace TimescaleAPI.Application.Services;
+
+public class FilterService(IResultRepository resultRepository, ILogger<FilterService> logger)
+{
+    public async Task<List<TimescaleResultDto>> GetResults(TimescaleFilterDto filterDto, CancellationToken cancellationToken)
+    {
+        var resultsByFilters = await resultRepository.GetResultsByFiltersAsync(filterDto, cancellationToken);
+        foreach (var result in resultsByFilters)
+        {
+            logger.LogCritical(result.Origin.FileName);
+        }
+        var resultDtoList = resultsByFilters.Select(x => x.ToResultDto(x.Origin.FileName)).ToList();
+        return resultDtoList;
+    }
+}

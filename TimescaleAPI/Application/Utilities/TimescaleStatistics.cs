@@ -1,4 +1,6 @@
-﻿namespace TimescaleAPI.Application;
+﻿using TimescaleAPI.Application.DTOs;
+
+namespace TimescaleAPI.Application.Utilities;
 
 public sealed class TimescaleStatistics
 {
@@ -18,7 +20,7 @@ public sealed class TimescaleStatistics
     public double MaxValue { get; private set; }
     public double MinValue { get; private set; }
 
-    public void Add(TimescaleData record)
+    public void Add(TimescaleValueDto record)
     {
         var date = record.Date.Value;
         var value = record.Value.Value;

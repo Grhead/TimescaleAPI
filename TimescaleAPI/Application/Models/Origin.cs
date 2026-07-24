@@ -2,15 +2,18 @@
 
 public class Origin
 {
-    public Guid Id { get; private set; }
-    public string NameHash { get; private set; }
-
-    public static Origin CreateOrigin(string nameHash)
+    protected Origin()
     {
-        return new Origin
-        {
-            Id = Guid.NewGuid(),
-            NameHash = nameHash
-        };
+        
     }
+    public Origin(string fileName)
+    {
+        Id = Guid.NewGuid();
+        FileName = fileName;
+    }
+    public Guid Id { get; private set; }
+    public string FileName { get; private set; }
+    
+    public ICollection<Value> Values { get; set; } = new List<Value>();
+    public ICollection<Result> Results { get; set; } = new List<Result>();
 }

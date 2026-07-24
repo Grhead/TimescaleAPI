@@ -1,11 +1,13 @@
-﻿using TimescaleAPI.Application.Interfaces;
+﻿using TimescaleAPI.Application.DTOs;
+using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Models;
+using TimescaleAPI.Application.Utilities;
 
 namespace TimescaleAPI.Application.Services;
 
 public sealed class ResultCalculator : IResultCalculator
 {
-    public Result Calculate(IReadOnlyList<TimescaleData> records)
+    public Result Calculate(IReadOnlyList<TimescaleValueDto> records)
     {
         var stats = new TimescaleStatistics();
         foreach (var record in records)
@@ -21,7 +23,7 @@ public sealed class ResultCalculator : IResultCalculator
             stats.MinValue);
     }
     
-    private static double CalculateMedian(IReadOnlyList<TimescaleData> records)
+    private static double CalculateMedian(IReadOnlyList<TimescaleValueDto> records)
     {
         var values = records
             .Select(r => r.Value!.Value)

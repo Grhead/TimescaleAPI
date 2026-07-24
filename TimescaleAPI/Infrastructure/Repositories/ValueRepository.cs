@@ -6,22 +6,22 @@ namespace TimescaleAPI.Infrastructure.Repositories;
 
 public class ValueRepository(MetricsContext context) : IValueRepository
 {
-    public async Task<Origin> GetOrAddOrigin(string fileNameHash)
+    public async Task<Origin> GetOrAddOrigin(string fileName, CancellationToken cancellationToken)
     {
-        var origin = await context.Origins.FirstOrDefaultAsync(x => x.NameHash == fileNameHash);
+        var origin = await context.Origins.FirstOrDefaultAsync(x => x.FileName == fileName, cancellationToken);
         if (origin != null) return origin;
 
-        origin = Origin.CreateOrigin(fileNameHash);
-        await context.AddAsync(origin);
+        origin = new Origin(fileName);
+        await context.AddAsync(origin, cancellationToken);
 
         return origin;
     }
 
-    public async Task AddOrUpdateValues(Origin origin, List<Value> values)
+    public async Task AddOrUpdateValues(Origin origin, List<Value> values, CancellationToken cancellationToken)
     {
         var existingValues = await context.Values
             .Where(x => x.OriginId == origin.Id)
-            .ToDictionaryAsync(x => x.Date);
+            .ToDictionaryAsync(x => x.Date, cancellationToken);
 
         foreach (var value in values)
         {

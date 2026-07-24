@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TimescaleAPI.Application.Exceptions;
 
-namespace TimescaleAPI.Application;
+namespace TimescaleAPI.Application.ExceptionHandlers;
 
 public class ValidationExceptionHandler(ILogger<ValidationExceptionHandler> logger) : IExceptionHandler
 {
