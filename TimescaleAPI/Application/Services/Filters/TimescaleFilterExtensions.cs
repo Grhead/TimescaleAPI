@@ -1,7 +1,7 @@
 ﻿using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.Models;
 
-namespace TimescaleAPI.Application.Utilities;
+namespace TimescaleAPI.Application.Services.Filters;
 
 public static class TimescaleFilterExtensions
 {

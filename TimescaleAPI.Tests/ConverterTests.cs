@@ -1,6 +1,6 @@
 using TimescaleAPI.Application.DTOs;
+using TimescaleAPI.Application.Mapping;
 using TimescaleAPI.Application.Models;
-using TimescaleAPI.Application.Utilities;
 
 namespace TimescaleAPI.Tests;
 

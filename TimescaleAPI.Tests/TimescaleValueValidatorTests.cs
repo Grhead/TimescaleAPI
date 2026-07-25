@@ -1,5 +1,5 @@
 using TimescaleAPI.Application.DTOs;
-using TimescaleAPI.Application.Utilities;
+using TimescaleAPI.Application.Validation;
 
 namespace TimescaleAPI.Tests;
 

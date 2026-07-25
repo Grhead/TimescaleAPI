@@ -35,7 +35,7 @@ public class ValueRepository(MetricsContext context) : IValueRepository
         await context.Values.AddRangeAsync(values, cancellationToken);
     }
 
-    public async Task<List<Value>> GetLastValues(string fileName)
+    public async Task<List<Value>> GetLastValuesAsync(string fileName)
     {
         return await context.Values
             .AsNoTracking()

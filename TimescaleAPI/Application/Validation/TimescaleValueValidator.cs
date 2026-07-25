@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using TimescaleAPI.Application.DTOs;
 
-namespace TimescaleAPI.Application.Utilities;
+namespace TimescaleAPI.Application.Validation;
 
 public class TimescaleValueValidator : AbstractValidator<TimescaleValueDto>
 {

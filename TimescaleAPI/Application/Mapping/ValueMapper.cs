@@ -1,9 +1,9 @@
 ﻿using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.Models;
 
-namespace TimescaleAPI.Application.Utilities;
+namespace TimescaleAPI.Application.Mapping;
 
-public static class TimescaleValueConverter
+public static class ValueMapper
 {
     public static Value ToValueModel(this TimescaleValueDto dto, Origin origin)
     {

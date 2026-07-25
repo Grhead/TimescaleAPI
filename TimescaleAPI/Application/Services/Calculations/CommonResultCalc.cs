@@ -1,8 +1,8 @@
-﻿using TimescaleAPI.Application.DTOs;
+﻿using TimescaleAPI.Application.Models;
 
-namespace TimescaleAPI.Application.Utilities;
+namespace TimescaleAPI.Application.Services.Calculations;
 
-public sealed class TimescaleStatistics
+public class CommonResultCalc
 {
     private int _count;
     private double _executionTimeSum;
@@ -20,11 +20,11 @@ public sealed class TimescaleStatistics
     public double MaxValue { get; private set; }
     public double MinValue { get; private set; }
 
-    public void Add(TimescaleValueDto record)
+    public void Add(Value record)
     {
-        var date = record.Date.Value;
-        var value = record.Value.Value;
-        var executionTime = record.ExecutionTime.Value;
+        var date = record.Date;
+        var value = record.IndicatorValue;
+        var executionTime = record.ExecutionTime;
 
         if (_count == 0)
         {

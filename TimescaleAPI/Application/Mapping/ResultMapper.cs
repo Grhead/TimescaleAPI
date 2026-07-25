@@ -1,9 +1,9 @@
 ﻿using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.Models;
 
-namespace TimescaleAPI.Application.Utilities;
+namespace TimescaleAPI.Application.Mapping;
 
-public static class TimescaleResultConverter
+public static class ResultMapper
 {
     public static TimescaleResultDto ToResultDto(this Result result, string fileName)
     {

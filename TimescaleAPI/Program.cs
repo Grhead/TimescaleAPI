@@ -5,7 +5,8 @@ using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.ExceptionHandlers;
 using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Services;
-using TimescaleAPI.Application.Utilities;
+using TimescaleAPI.Application.Services.Calculations;
+using TimescaleAPI.Application.Validation;
 using TimescaleAPI.Infrastructure;
 using TimescaleAPI.Infrastructure.Repositories;
 
@@ -33,12 +34,13 @@ public static class Program
 
         builder.Services.AddScoped<IValidator<TimescaleValueDto>, TimescaleValueValidator>();
         builder.Services.AddScoped<IResultCalculator, ResultCalculator>();
+        builder.Services.AddScoped<IFileParser, CsvParser>();
         builder.Services.AddScoped<IUploadService, UploadService>();
         builder.Services.AddScoped<IFilterService, FilterService>();
         builder.Services.AddScoped<IValueService, ValueService>();
 
         var app = builder.Build();
-        
+
         app.MapOpenApi();
         app.UseSwaggerUI(options => { options.SwaggerEndpoint("/openapi/v1.json", "v1"); });
 

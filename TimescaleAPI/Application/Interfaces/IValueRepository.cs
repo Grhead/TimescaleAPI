@@ -9,5 +9,5 @@ public interface IValueRepository
     public Task ReplaceValuesAsync(Origin origin, IReadOnlyCollection<Value> records,
         CancellationToken cancellationToken);
 
-    public Task<List<Value>> GetLastValues(string fileName);
+    public Task<List<Value>> GetLastValuesAsync(string fileName);
 }

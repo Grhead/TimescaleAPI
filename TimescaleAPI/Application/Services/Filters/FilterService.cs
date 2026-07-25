@@ -1,6 +1,6 @@
 ﻿using TimescaleAPI.Application.DTOs;
 using TimescaleAPI.Application.Interfaces;
-using TimescaleAPI.Application.Utilities;
+using TimescaleAPI.Application.Mapping;
 
 namespace TimescaleAPI.Application.Services;
 
