@@ -6,6 +6,7 @@ using TimescaleAPI.Application.ExceptionHandlers;
 using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Services;
 using TimescaleAPI.Application.Services.Calculations;
+using TimescaleAPI.Application.Services.Filters;
 using TimescaleAPI.Application.Validation;
 using TimescaleAPI.Infrastructure;
 using TimescaleAPI.Infrastructure.Repositories;

@@ -2,7 +2,7 @@
 using TimescaleAPI.Application.Interfaces;
 using TimescaleAPI.Application.Mapping;
 
-namespace TimescaleAPI.Application.Services;
+namespace TimescaleAPI.Application.Services.Filters;
 
 public class FilterService(IResultRepository resultRepository, ILogger<FilterService> logger) : IFilterService
 {

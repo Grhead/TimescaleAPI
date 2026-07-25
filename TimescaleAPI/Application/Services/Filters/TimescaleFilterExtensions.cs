@@ -13,9 +13,9 @@ public static class TimescaleFilterExtensions
             query = query.Where(x => x.Origin.FileName == filterDto.FileName);
 
         if (filterDto.FromDate.HasValue)
-            query = query.Where(x => x.Origin.Values.Any(v => v.Date >= filterDto.FromDate));
+            query = query.Where(x => x.MinDate >= filterDto.FromDate);
         if (filterDto.ToDate.HasValue)
-            query = query.Where(x => x.Origin.Values.Any(v => v.Date <= filterDto.ToDate));
+            query = query.Where(x => x.MinDate <= filterDto.ToDate);
 
         if (filterDto.MinAvgValue.HasValue)
             query = query.Where(x => x.AvgValue >= filterDto.MinAvgValue);

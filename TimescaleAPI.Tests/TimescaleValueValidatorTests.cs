@@ -18,6 +18,24 @@ public class TimescaleValueValidatorTests
     }
 
     [Fact]
+    public void ZeroExecutionTime_Success()
+    {
+        var dto = new TimescaleValueDto(DateTime.UtcNow.AddMinutes(-1), 0, 42.5);
+        var result = _validator.Validate(dto);
+
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void ZeroValue_Success()
+    {
+        var dto = new TimescaleValueDto(DateTime.UtcNow.AddMinutes(-1), 100, 0);
+        var result = _validator.Validate(dto);
+
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
     public void NullDate_Fails()
     {
         var dto = new TimescaleValueDto(null, 100, 42.5);
@@ -59,16 +77,6 @@ public class TimescaleValueValidatorTests
     }
 
     [Fact]
-    public void ZeroExecutionTime_Fails()
-    {
-        var dto = new TimescaleValueDto(new DateTime(2025, 6, 15, 10, 0, 0, DateTimeKind.Utc), 0, 42.5);
-        var result = _validator.Validate(dto);
-
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.PropertyName == "ExecutionTime");
-    }
-
-    [Fact]
     public void NegativeExecutionTime_Fails()
     {
         var dto = new TimescaleValueDto(new DateTime(2025, 6, 15, 10, 0, 0, DateTimeKind.Utc), -5, 42.5);
@@ -88,15 +96,6 @@ public class TimescaleValueValidatorTests
         Assert.Contains(result.Errors, e => e.PropertyName == "Value");
     }
 
-    [Fact]
-    public void ZeroValue_Fails()
-    {
-        var dto = new TimescaleValueDto(new DateTime(2025, 6, 15, 10, 0, 0, DateTimeKind.Utc), 100, 0.0);
-        var result = _validator.Validate(dto);
-
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.PropertyName == "Value");
-    }
 
     [Fact]
     public void NegativeValue_Fails()

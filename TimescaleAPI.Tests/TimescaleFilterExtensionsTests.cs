@@ -211,4 +211,56 @@ public class TimescaleFilterExtensionsTests
 
         Assert.Empty(filtered);
     }
+    
+    [Fact]
+    public void Apply_FromDate_FilterCorrectly()
+    {
+        var origin = CreateOrigin("data.csv");
+
+        var results = new List<Result>
+        {
+            CreateResult(origin, timestamp: new DateTime(2026, 1, 1)),
+            CreateResult(origin, timestamp: new DateTime(2026, 2, 1))
+        };
+
+        var filter = new TimescaleFilterDto(
+            null,
+            new DateTime(2026, 1, 15),
+            null,
+            null,
+            null,
+            null,
+            null);
+
+        var filtered = filter.Apply(results.AsQueryable()).ToList();
+
+        Assert.Single(filtered);
+        Assert.Equal(new DateTime(2026, 2, 1), filtered[0].MinDate);
+    }
+
+    [Fact]
+    public void Apply_ToDate_FilterCorrectly()
+    {
+        var origin = CreateOrigin("data.csv");
+
+        var results = new List<Result>
+        {
+            CreateResult(origin, timestamp: new DateTime(2026, 1, 1)),
+            CreateResult(origin, timestamp: new DateTime(2026, 2, 1))
+        };
+
+        var filter = new TimescaleFilterDto(
+            null,
+            null,
+            new DateTime(2026, 1, 15),
+            null,
+            null,
+            null,
+            null);
+
+        var filtered = filter.Apply(results.AsQueryable()).ToList();
+
+        Assert.Single(filtered);
+        Assert.Equal(new DateTime(2026, 1, 1), filtered[0].MinDate);
+    }
 }

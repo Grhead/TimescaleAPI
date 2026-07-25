@@ -17,10 +17,10 @@ public class TimescaleValueValidator : AbstractValidator<TimescaleValueDto>
 
         RuleFor(timescaleData => timescaleData.ExecutionTime)
             .NotNull().WithMessage("Execution time cannot be null")
-            .GreaterThan(0).WithMessage("Execution time must be greater than zero");
+            .GreaterThanOrEqualTo(0).WithMessage("Execution time must be greater than zero or equal");
 
         RuleFor(timescaleData => timescaleData.Value)
             .NotNull().WithMessage("Value cannot be null")
-            .GreaterThan(0).WithMessage("Value must be greater than zero");
+            .GreaterThanOrEqualTo(0).WithMessage("Value must be greater than zero or equal");
     }
 }
