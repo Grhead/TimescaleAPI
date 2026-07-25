@@ -43,7 +43,9 @@ public class UploadService(
             throw;
         }
 
-        return $"Successfully processed {tsData.Count} rows from {fileName}";
+        var grammar = (tsData.Count == 1) ? "row" : "rows";
+
+        return $"Successfully processed {tsData.Count} {grammar} from {fileName}";
     }
 
     private List<TimescaleValueDto> ParseUpload(Stream stream)

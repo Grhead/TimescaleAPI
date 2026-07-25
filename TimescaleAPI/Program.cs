@@ -11,7 +11,7 @@ using TimescaleAPI.Infrastructure.Repositories;
 
 namespace TimescaleAPI;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {
@@ -38,16 +38,16 @@ public class Program
         builder.Services.AddScoped<IValueService, ValueService>();
 
         var app = builder.Build();
+        
+        app.MapOpenApi();
+        app.UseSwaggerUI(options => { options.SwaggerEndpoint("/openapi/v1.json", "v1"); });
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-            app.UseSwaggerUI(options => { options.SwaggerEndpoint("/openapi/v1.json", "v1"); });
-        }
 
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<MetricsContext>();
+            db.Database.Migrate();
+
             db.Origins.Select(x => x.Id).Any();
             db.Database.CanConnect();
         }
