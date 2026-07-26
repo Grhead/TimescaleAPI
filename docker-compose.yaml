@@ -1,0 +1,45 @@
+﻿volumes:
+  postgres_data:
+
+services:
+  db:
+    image: postgres:18
+    container_name: ts-api-postgres-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tsdatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-tsdatabase}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  backend:
+    image: timescale-api/backend
+    container_name: ts-api-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=tsdatabase;Username=postgres;Password=postgres
+    build:
+      context: .
+      dockerfile: TimescaleAPI/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+
+  tests:
+    image: timescale-api/tests
+    container_name: ts-api-tests
+    depends_on:
+      - backend
+    build:
+      context: .
+      dockerfile: TimescaleAPI.Tests/Dockerfile

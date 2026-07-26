@@ -31,6 +31,8 @@
 _UpgradeReport_Files/
 [Pp]ackages/
 
+appsettings.Development.json
+
 Thumbs.db
 Desktop.ini
 .DS_Store

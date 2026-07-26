@@ -1,0 +1,26 @@
+﻿using FluentValidation;
+using TimescaleAPI.Application.DTOs;
+
+namespace TimescaleAPI.Application.Validation;
+
+public class TimescaleValueValidator : AbstractValidator<TimescaleValueDto>
+{
+    private readonly DateTime _minDate = new(2000, 1, 1);
+
+    public TimescaleValueValidator()
+    {
+        RuleFor(timescaleData => timescaleData.Date)
+            .Cascade(CascadeMode.Stop)
+            .NotNull().WithMessage("Date cannot be null")
+            .Must(date => date.Value.ToUniversalTime() >= _minDate && date.Value.ToUniversalTime() <= DateTime.UtcNow)
+            .WithMessage("The date cannot be earlier than January 1, 2000, or later than today.");
+
+        RuleFor(timescaleData => timescaleData.ExecutionTime)
+            .NotNull().WithMessage("Execution time cannot be null")
+            .GreaterThanOrEqualTo(0).WithMessage("Execution time must be greater than zero or equal");
+
+        RuleFor(timescaleData => timescaleData.Value)
+            .NotNull().WithMessage("Value cannot be null")
+            .GreaterThanOrEqualTo(0).WithMessage("Value must be greater than zero or equal");
+    }
+}
