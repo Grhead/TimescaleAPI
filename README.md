@@ -6,7 +6,7 @@
 docker compose up --build
 ```
 
-Swagger:
+## Swagger:
 
 ```
 http://localhost:8080/swagger
