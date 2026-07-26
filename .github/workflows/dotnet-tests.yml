@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup .NET SDK
@@ -21,8 +21,8 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build project
+      - name: Build solution
         run: dotnet build -c Release --no-restore
 
       - name: Run tests
-        run: dotnet test --no-build
+        run: dotnet test -c Release --no-build
