@@ -6,13 +6,13 @@
 docker compose up --build
 ```
 
-## API:
+## API
 
 ```
 http://localhost:8080
 ```
 
-## Swagger:
+## Swagger
 
 ```
 http://localhost:8080/swagger
