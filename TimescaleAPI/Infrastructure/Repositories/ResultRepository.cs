@@ -6,7 +6,7 @@ using TimescaleAPI.Application.Services.Filters;
 
 namespace TimescaleAPI.Infrastructure.Repositories;
 
-public class ResultRepository(MetricsContext context, ILogger<ResultRepository> logger) : IResultRepository
+public class ResultRepository(MetricsContext context) : IResultRepository
 {
     public async Task AddOrUpdateResultAsync(Origin origin, Result result, CancellationToken cancellationToken)
     {

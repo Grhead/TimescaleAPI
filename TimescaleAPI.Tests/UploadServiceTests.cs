@@ -21,8 +21,7 @@ public class UploadServiceTests
     {
         _service = new UploadService(
             _valueRepo, _resultRepo, _unitOfWork, _fileParser,
-            _calculator,
-            Substitute.For<ILogger<UploadService>>());
+            _calculator);
     }
 
     [Fact]

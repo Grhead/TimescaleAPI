@@ -8,8 +8,7 @@ public class UploadService(
     IResultRepository resultRepository,
     IUnitOfWork unitOfWork,
     IFileParser fileParser,
-    IResultCalculator resultCalculator,
-    ILogger<UploadService> logger) : IUploadService
+    IResultCalculator resultCalculator) : IUploadService
 {
     public async Task<string> ProcessUpload(Stream stream, string rowFileName, CancellationToken cancellationToken)
     {
